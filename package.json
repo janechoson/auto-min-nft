@@ -1,0 +1,45 @@
+{
+  "name": "nft-public-mint",
+  "version": "1.0.0",
+  "description": "Vue 3 UI for public SeaDrop NFT mints — builds calldata on-chain, no OpenSea token required",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "npm run build:server && npm run build:web",
+    "build:server": "tsc",
+    "build:web": "vite build",
+    "start": "node dist/server.js",
+    "dev": "npm run dev:app",
+    "dev:server": "ts-node src/server.ts",
+    "dev:web": "vite --host 0.0.0.0",
+    "dev:app": "concurrently \"npm run dev:server\" \"npm run dev:web\""
+  },
+  "keywords": [
+    "nft",
+    "mint",
+    "seadrop",
+    "opensea",
+    "ethereum",
+    "base",
+    "vue",
+    "web3"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.9.0",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "concurrently": "^9.2.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.2",
+    "vite": "^5.4.21",
+    "vue": "^3.5.41"
+  }
+}
