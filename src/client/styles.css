@@ -1,6 +1,6 @@
 :root {
-  color: #e8edf6;
-  background: #101319;
+  color: #17171c;
+  background: #ffffff;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -27,8 +27,8 @@ select {
   min-height: 100vh;
   padding: 32px;
   background:
-    radial-gradient(circle at 20% 15%, rgba(58, 141, 255, 0.16), transparent 28rem),
-    linear-gradient(135deg, #111827 0%, #121416 48%, #171f1a 100%);
+    linear-gradient(180deg, rgba(238, 0, 51, 0.1) 0, rgba(238, 0, 51, 0) 260px),
+    #ffffff;
 }
 
 .workspace {
@@ -46,7 +46,7 @@ select {
 
 .eyebrow {
   margin: 0 0 6px;
-  color: #80d6b4;
+  color: #ee0033;
   font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
@@ -54,6 +54,7 @@ select {
 
 h1 {
   margin: 0;
+  color: #15151a;
   font-size: clamp(32px, 5vw, 58px);
   line-height: 1;
 }
@@ -61,17 +62,17 @@ h1 {
 .status {
   min-width: 112px;
   padding: 10px 14px;
-  border: 1px solid rgba(128, 214, 180, 0.35);
+  border: 1px solid rgba(238, 0, 51, 0.28);
   border-radius: 8px;
-  color: #baf4dd;
+  color: #ee0033;
   text-align: center;
-  background: rgba(9, 27, 20, 0.82);
+  background: #fff3f6;
 }
 
 .status.error {
-  border-color: rgba(255, 111, 111, 0.42);
-  color: #ffbbbb;
-  background: rgba(46, 12, 16, 0.85);
+  border-color: rgba(238, 0, 51, 0.48);
+  color: #b50027;
+  background: #ffe7ec;
 }
 
 .layout {
@@ -82,11 +83,12 @@ h1 {
 }
 
 .panel {
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  min-width: 0;
+  border: 1px solid rgba(238, 0, 51, 0.12);
   border-radius: 8px;
   padding: 20px;
-  background: rgba(18, 22, 29, 0.86);
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 48px rgba(238, 0, 51, 0.1);
 }
 
 label {
@@ -98,7 +100,7 @@ label {
 label span,
 .meta-label {
   margin: 0;
-  color: #aab5c6;
+  color: #6f7078;
   font-size: 13px;
   font-weight: 700;
 }
@@ -107,18 +109,18 @@ input,
 select {
   width: 100%;
   min-height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.13);
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 10px 12px;
-  color: #f5f7fb;
-  background: #0d1117;
+  color: #17171c;
+  background: #ffffff;
   outline: none;
 }
 
 input:focus,
 select:focus {
-  border-color: #80d6b4;
-  box-shadow: 0 0 0 3px rgba(128, 214, 180, 0.14);
+  border-color: #ee0033;
+  box-shadow: 0 0 0 3px rgba(238, 0, 51, 0.12);
 }
 
 .field-grid {
@@ -139,7 +141,7 @@ button {
   border: 0;
   border-radius: 8px;
   padding: 0 16px;
-  color: #07110d;
+  color: #ffffff;
   font-weight: 800;
   cursor: pointer;
 }
@@ -150,13 +152,13 @@ button:disabled {
 }
 
 .primary {
-  background: #80d6b4;
+  background: #ee0033;
 }
 
 .secondary {
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #d7deea;
-  background: transparent;
+  border: 1px solid rgba(238, 0, 51, 0.24);
+  color: #ee0033;
+  background: #ffffff;
 }
 
 .side {
@@ -166,7 +168,7 @@ button:disabled {
 
 .meta-value {
   margin: 6px 0 0;
-  color: #f4f7fb;
+  color: #17171c;
   line-height: 1.5;
 }
 
@@ -181,8 +183,8 @@ pre {
   overflow: auto;
   border-radius: 8px;
   padding: 14px;
-  color: #d9f7e9;
-  background: #000;
+  color: #f5f7fb;
+  background: #17171c;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   font-size: 12px;
   line-height: 1.55;
@@ -190,13 +192,154 @@ pre {
 }
 
 .summary {
-  color: #dce6f3;
+  color: #f2f4f8;
 }
 
 .logbox {
   min-height: 360px;
   max-height: 520px;
-  color: #c8f7d8;
+  color: #ffe7ec;
+}
+
+.fire-field {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.field-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.field-heading span {
+  color: #6f7078;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field-heading strong {
+  color: #ee0033;
+  font-size: 13px;
+  font-weight: 800;
+  text-align: right;
+}
+
+.date-picker {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 150px;
+  gap: 14px;
+  border: 1px solid #f0d4da;
+  border-radius: 8px;
+  padding: 14px;
+  background: #fff8fa;
+}
+
+.calendar {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.calendar-header,
+.month-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.calendar-header {
+  justify-content: space-between;
+}
+
+.month-title {
+  flex: 1;
+}
+
+.month-title select {
+  min-width: 0;
+}
+
+.month-title input {
+  min-width: 0;
+}
+
+.icon-button {
+  width: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
+  color: #ee0033;
+  background: #ffffff;
+  border: 1px solid rgba(238, 0, 51, 0.22);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.weekday-grid,
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.weekday-grid span {
+  color: #8b8c94;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.day-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0;
+  color: #25252b;
+  background: #ffffff;
+  border: 1px solid #eceef2;
+  font-weight: 800;
+}
+
+.day-button.today {
+  border-color: rgba(238, 0, 51, 0.5);
+}
+
+.day-button.selected {
+  color: #ffffff;
+  background: #ee0033;
+  border-color: #ee0033;
+}
+
+.day-button.empty {
+  background: transparent;
+  border-color: transparent;
+}
+
+.time-controls {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.time-controls label {
+  margin: 0;
+}
+
+.small {
+  min-height: 38px;
+}
+
+.utc-preview {
+  margin: 0;
+  color: #7a1a2f;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 860px) {
@@ -209,12 +352,33 @@ pre {
     display: grid;
     grid-template-columns: 1fr;
   }
+
+  .date-picker {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 560px) {
+  .panel {
+    padding: 16px;
+  }
+
   .field-grid {
     grid-template-columns: 1fr;
     gap: 0;
+  }
+
+  .field-heading {
+    display: grid;
+  }
+
+  .field-heading strong {
+    text-align: left;
+  }
+
+  .month-title {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 84px;
   }
 
   .actions button {

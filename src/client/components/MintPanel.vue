@@ -28,13 +28,39 @@ const quantity = ref(1);
 const gasLimit = ref(250000);
 const maxFeeGwei = ref(2);
 const maxPriorityGwei = ref(0.05);
-const targetStart = ref("");
 const output = ref("Ready");
 const jobLog = ref("Ready");
 const status = ref("Idle");
 const isBusy = ref(false);
 const activeJobId = ref<string | null>(null);
 let pollTimer: number | null = null;
+
+const now = new Date();
+const fireYear = ref(now.getUTCFullYear());
+const fireMonth = ref(now.getUTCMonth());
+const fireDay = ref(now.getUTCDate());
+const fireHour = ref(now.getUTCHours());
+const fireMinute = ref(now.getUTCMinutes());
+const visibleYear = ref(fireYear.value);
+const visibleMonth = ref(fireMonth.value);
+
+const monthNames = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const hours = Array.from({ length: 24 }, (_, hour) => hour);
+const minutes = Array.from({ length: 60 }, (_, minute) => minute);
 
 const selectedRpc = computed(() =>
   rpcs.value.find((rpc) => String(rpc.id) === String(selectedRpcId.value)) ?? null
@@ -44,10 +70,36 @@ const canSubmit = computed(() =>
   Boolean(nftContract.value.trim() && selectedRpc.value && !isBusy.value)
 );
 
+const calendarDays = computed(() => {
+  const firstDay = new Date(Date.UTC(visibleYear.value, visibleMonth.value, 1));
+  const startOffset = (firstDay.getUTCDay() + 6) % 7;
+  const daysInMonth = new Date(Date.UTC(visibleYear.value, visibleMonth.value + 1, 0)).getUTCDate();
+  return [
+    ...Array.from({ length: startOffset }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
+  ];
+});
+
+const targetStart = computed(() => {
+  const date = new Date(Date.UTC(fireYear.value, fireMonth.value, fireDay.value, fireHour.value, fireMinute.value, 0, 0));
+  return date.toISOString().replace(".000Z", "Z");
+});
+
+const selectedDateLabel = computed(
+  () =>
+    `${pad(fireDay.value)}/${pad(fireMonth.value + 1)}/${fireYear.value} ${pad(fireHour.value)}:${pad(
+      fireMinute.value
+    )} UTC`
+);
+
 onMounted(async () => {
   try {
-    const configPath = "/const.js";
-    const mod = await import(/* @vite-ignore */ configPath);
+    const response = await fetch("/const.js");
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const source = await response.text();
+    const moduleUrl = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
+    const mod = await import(/* @vite-ignore */ moduleUrl);
+    URL.revokeObjectURL(moduleUrl);
     rpcs.value = Array.isArray(mod.default) ? mod.default : [];
     selectedRpcId.value = rpcs.value[0]?.id ?? null;
   } catch (error) {
@@ -78,7 +130,7 @@ async function startMint() {
     gasLimit: Number(gasLimit.value || 250000),
     maxFeeGwei: Number(maxFeeGwei.value || 0),
     maxPriorityGwei: Number(maxPriorityGwei.value || 0),
-    targetStart: normalizeUtcInput(targetStart.value),
+    targetStart: targetStart.value,
   };
 
   try {
@@ -213,10 +265,49 @@ function formatTime(value: number | null | undefined) {
   return value ? new Date(value).toLocaleString() : null;
 }
 
-function normalizeUtcInput(value: string) {
-  const raw = value.trim();
-  if (!raw) return null;
-  return /(?:z|[+-]\d{2}:?\d{2})$/i.test(raw) ? raw : `${raw}Z`;
+function pad(value: number) {
+  return String(value).padStart(2, "0");
+}
+
+function isSelectedDate(day: number | null) {
+  return (
+    day === fireDay.value &&
+    visibleMonth.value === fireMonth.value &&
+    visibleYear.value === fireYear.value
+  );
+}
+
+function isToday(day: number | null) {
+  const today = new Date();
+  return (
+    day === today.getUTCDate() &&
+    visibleMonth.value === today.getUTCMonth() &&
+    visibleYear.value === today.getUTCFullYear()
+  );
+}
+
+function selectDate(day: number | null) {
+  if (!day) return;
+  fireYear.value = visibleYear.value;
+  fireMonth.value = visibleMonth.value;
+  fireDay.value = day;
+}
+
+function changeMonth(delta: number) {
+  const next = new Date(Date.UTC(visibleYear.value, visibleMonth.value + delta, 1));
+  visibleYear.value = next.getUTCFullYear();
+  visibleMonth.value = next.getUTCMonth();
+}
+
+function goToToday() {
+  const today = new Date();
+  fireYear.value = today.getUTCFullYear();
+  fireMonth.value = today.getUTCMonth();
+  fireDay.value = today.getUTCDate();
+  fireHour.value = today.getUTCHours();
+  fireMinute.value = today.getUTCMinutes();
+  visibleYear.value = fireYear.value;
+  visibleMonth.value = fireMonth.value;
 }
 </script>
 
@@ -271,10 +362,68 @@ function normalizeUtcInput(value: string) {
           </label>
         </div>
 
-        <label>
-          <span>Fire time UTC</span>
-          <input v-model="targetStart" placeholder="2026-08-17T12:00:00Z" />
-        </label>
+        <div class="fire-field">
+          <div class="field-heading">
+            <span>Fire time UTC</span>
+            <strong>{{ selectedDateLabel }}</strong>
+          </div>
+
+          <div class="date-picker">
+            <div class="calendar">
+              <div class="calendar-header">
+                <button class="icon-button" type="button" aria-label="Previous month" @click="changeMonth(-1)">
+                  ‹
+                </button>
+                <div class="month-title">
+                  <select v-model.number="visibleMonth" aria-label="Month">
+                    <option v-for="(month, index) in monthNames" :key="month" :value="index">
+                      {{ month }}
+                    </option>
+                  </select>
+                  <input v-model.number="visibleYear" aria-label="Year" min="1970" type="number" />
+                </div>
+                <button class="icon-button" type="button" aria-label="Next month" @click="changeMonth(1)">
+                  ›
+                </button>
+              </div>
+
+              <div class="weekday-grid">
+                <span v-for="weekday in weekdays" :key="weekday">{{ weekday }}</span>
+              </div>
+
+              <div class="day-grid">
+                <button
+                  v-for="(day, index) in calendarDays"
+                  :key="`${visibleYear}-${visibleMonth}-${index}`"
+                  class="day-button"
+                  :class="{ selected: isSelectedDate(day), today: isToday(day), empty: !day }"
+                  :disabled="!day"
+                  type="button"
+                  @click="selectDate(day)"
+                >
+                  {{ day || "" }}
+                </button>
+              </div>
+            </div>
+
+            <div class="time-controls">
+              <label>
+                <span>Giờ</span>
+                <select v-model.number="fireHour">
+                  <option v-for="hour in hours" :key="hour" :value="hour">{{ pad(hour) }}</option>
+                </select>
+              </label>
+              <label>
+                <span>Phút</span>
+                <select v-model.number="fireMinute">
+                  <option v-for="minute in minutes" :key="minute" :value="minute">{{ pad(minute) }}</option>
+                </select>
+              </label>
+              <button class="secondary small" type="button" @click="goToToday">Today</button>
+              <p class="utc-preview">{{ targetStart }}</p>
+            </div>
+          </div>
+        </div>
 
         <div class="actions">
           <button class="primary" :disabled="!canSubmit" type="submit">
