@@ -60,6 +60,19 @@ export const CHAINS: ChainProfile[] = [
       ],
     },
   },
+  {
+    key: "bsc",
+    chainId: 56,
+    name: "BNB Smart Chain",
+    explorer: "https://bscscan.com",
+    nativeSymbol: "BNB",
+    rpc: {
+      public: [
+        "https://binance.llamarpc.com",
+        "https://bsc-dataseed.binance.org",
+      ],
+    },
+  },
 ];
 
 const DEFAULT_EXPLORER = "https://basescan.org";

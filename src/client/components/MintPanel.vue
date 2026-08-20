@@ -33,6 +33,8 @@ const jobLog = ref("Ready");
 const status = ref("Idle");
 const isBusy = ref(false);
 const activeJobId = ref<string | null>(null);
+const privateKeys = ref<string[]>([]);
+const walletFileName = ref("");
 let pollTimer: number | null = null;
 
 const now = new Date();
@@ -67,7 +69,7 @@ const selectedRpc = computed(() =>
 );
 
 const canSubmit = computed(() =>
-  Boolean(nftContract.value.trim() && selectedRpc.value && !isBusy.value)
+  Boolean(nftContract.value.trim() && selectedRpc.value && privateKeys.value.length > 0 && !isBusy.value)
 );
 
 const calendarDays = computed(() => {
@@ -108,6 +110,26 @@ onMounted(async () => {
   }
 });
 
+async function loadWalletFile(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  try {
+    const entries = (await file.text()).split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    if (entries.length === 0) throw new Error("File does not contain any private key.");
+    privateKeys.value = entries;
+    walletFileName.value = file.name;
+    status.value = "Ready";
+    output.value = `${entries.length} wallet key(s) loaded.`;
+  } catch (error) {
+    privateKeys.value = [];
+    walletFileName.value = "";
+    setError(String(error));
+  } finally {
+    input.value = "";
+  }
+}
+
 async function startMint() {
   if (!nftContract.value.trim()) {
     setError("Missing NFT contract address.");
@@ -131,7 +153,9 @@ async function startMint() {
     maxFeeGwei: Number(maxFeeGwei.value || 0),
     maxPriorityGwei: Number(maxPriorityGwei.value || 0),
     targetStart: targetStart.value,
+    privateKeys: privateKeys.value,
   };
+  
 
   try {
     const response = await fetch("/api/mint", {
@@ -326,11 +350,18 @@ function goToToday() {
     <div class="layout">
       <form class="panel" @submit.prevent="startMint">
         <label>
+          <span>Danh sách ví</span>
+          <input accept=".txt,text/plain" type="file" @change="loadWalletFile" />
+          <small>{{ privateKeys.length ? `${privateKeys.length} ví đã tải từ ${walletFileName}` : "Mỗi dòng trong file là một private key" }}</small>
+        </label>
+
+        <label>
           <span>Địa chỉ NFT</span>
           <input v-model="nftContract" autocomplete="off" placeholder="0x..." />
         </label>
 
         <label>
+          <!-- RPC này sẽ dùng chung cho tất cả các ví (mint cùng 1 mạng lưới) -->
           <span>RPC</span>
           <select v-model="selectedRpcId">
             <option :value="null" disabled>Select RPC</option>
@@ -438,7 +469,7 @@ function goToToday() {
       <aside class="panel side">
         <div>
           <p class="meta-label">Wallet</p>
-          <p class="meta-value">Loaded from server .env</p>
+          <p class="meta-value">{{ privateKeys.length ? `${privateKeys.length} ví đã sẵn sàng` : "Chưa tải file ví" }}</p>
         </div>
         <div>
           <p class="meta-label">Selected RPC</p>

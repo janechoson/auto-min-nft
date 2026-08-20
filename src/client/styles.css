@@ -36,6 +36,37 @@ select {
   margin: 0 auto;
 }
 
+.page-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.page-switcher {
+  display: inline-flex;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid rgba(238, 0, 51, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 24px rgba(238, 0, 51, 0.08);
+}
+
+.tab-button {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #3d3e45;
+  background: transparent;
+  font-weight: 700;
+}
+
+.tab-button.active {
+  border-color: rgba(238, 0, 51, 0.2);
+  color: #ee0033;
+  background: #fff3f6;
+}
+
 .topbar {
   display: flex;
   align-items: flex-end;
@@ -166,10 +197,21 @@ button:disabled {
   gap: 16px;
 }
 
+.meta-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
 .meta-value {
   margin: 6px 0 0;
   color: #17171c;
   line-height: 1.5;
+}
+
+.no-top {
+  margin-top: 0;
 }
 
 .break {
