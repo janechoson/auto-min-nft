@@ -232,11 +232,17 @@ async function approveAndBuy() {
           <input v-model="tokenAddress" autocomplete="off" placeholder="0x..." />
         </label>
 
-        <label>
+        <div class="field-label">
           <span>Danh sách ví</span>
-          <input accept=".txt,text/plain" type="file" @change="loadWalletFile" />
-          <small>{{ privateKeys.length ? `${privateKeys.length} ví đã tải từ ${walletFileName}` : "Mỗi dòng trong file là một private key" }}</small>
-        </label>
+          <div class="file-upload">
+            <label class="file-picker">
+              <span class="file-icon" aria-hidden="true">↑</span>
+              <span>{{ privateKeys.length ? "Wallet file loaded" : "Upload wallet file" }}</span>
+              <input accept=".txt,text/plain" type="file" @change="loadWalletFile" />
+            </label>
+            <span class="file-status">{{ privateKeys.length ? "********" : "TXT only" }}</span>
+          </div>
+        </div>
 
         <div class="field-grid">
           <label>

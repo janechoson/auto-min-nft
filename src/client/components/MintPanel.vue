@@ -349,11 +349,17 @@ function goToToday() {
 
     <div class="layout">
       <form class="panel" @submit.prevent="startMint">
-        <label>
+        <div class="field-label">
           <span>Danh sách ví</span>
-          <input accept=".txt,text/plain" type="file" @change="loadWalletFile" />
-          <small>{{ privateKeys.length ? `${privateKeys.length} ví đã tải từ ${walletFileName}` : "Mỗi dòng trong file là một private key" }}</small>
-        </label>
+          <div class="file-upload">
+            <label class="file-picker">
+              <span class="file-icon" aria-hidden="true">↑</span>
+              <span>{{ privateKeys.length ? "Wallet file loaded" : "Upload wallet file" }}</span>
+              <input accept=".txt,text/plain" type="file" @change="loadWalletFile" />
+            </label>
+            <span class="file-status">{{ privateKeys.length ? "********" : "TXT only" }}</span>
+          </div>
+        </div>
 
         <label>
           <span>Địa chỉ NFT</span>
@@ -469,7 +475,7 @@ function goToToday() {
       <aside class="panel side">
         <div>
           <p class="meta-label">Wallet</p>
-          <p class="meta-value">{{ privateKeys.length ? `${privateKeys.length} ví đã sẵn sàng` : "Chưa tải file ví" }}</p>
+          <p class="meta-value">{{ privateKeys.length ? "********" : "Chưa tải file ví" }}</p>
         </div>
         <div>
           <p class="meta-label">Selected RPC</p>

@@ -52,6 +52,19 @@ exports.CHAINS = [
             ],
         },
     },
+    {
+        key: "bsc",
+        chainId: 56,
+        name: "BNB Smart Chain",
+        explorer: "https://bscscan.com",
+        nativeSymbol: "BNB",
+        rpc: {
+            public: [
+                "https://binance.llamarpc.com",
+                "https://bsc-dataseed.binance.org",
+            ],
+        },
+    },
 ];
 const DEFAULT_EXPLORER = "https://basescan.org";
 // Resolve a chain by its numeric chainId (from the live network) or by app key.
